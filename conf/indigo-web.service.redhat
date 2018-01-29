@@ -1,0 +1,21 @@
+[Unit]
+Description=Indigo-web job
+Requires=dse.service
+After=dse.service
+
+[Service]
+Environment="CQLENG_ALLOW_SCHEMA_MANAGEMENT=1"
+
+Restart=on-failure
+
+StandardOutput=tty
+StandardError=tty
+
+User=indigo
+Group=nobody
+
+WorkingDirectory=/var/lib/indigo/web/project
+ExecStart=/var/lib/indigo/web/bin/gunicorn indigo_ui.wsgi --log-file=/var/lib/indigo/log/indigo-web-gunicorn.log --log-level=info --timeout=300
+
+[Install]
+WantedBy=multi-user.target

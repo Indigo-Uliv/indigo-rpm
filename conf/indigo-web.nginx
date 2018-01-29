@@ -1,0 +1,29 @@
+upstream gunicorn {
+    server 127.0.0.1:8000;
+}
+
+server {
+    listen  80;
+    server_name indigo;
+
+    client_max_body_size 100m;
+
+    location /static {
+        autoindex on;
+        alias /var/lib/indigo/web/project/static/;
+    }
+
+    location /media {
+        autoindex on;
+        alias /var/lib/indigo/web/project/media/;
+    }
+
+    location / {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_pass http://gunicorn;
+        proxy_redirect off;
+        client_max_body_size 10M;
+    }
+}
